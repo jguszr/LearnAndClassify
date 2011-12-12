@@ -20,7 +20,7 @@ def tuplesToDictionaires(tuples):
     [ret.update({k,v}) for k,v in tuples]
     return ret
         
-if __name__ == '__main__':
+def test():
     print "frequencies",
     for k in testContext.iterkeys():
         print k, frequencies(testContext[k])
