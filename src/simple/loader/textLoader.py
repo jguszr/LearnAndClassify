@@ -85,13 +85,13 @@ def loadContext(filename):
 def basicTest():
     cont = {}
     cont = loadRaw("bacon",cont,"pg46.txt",100,20)
-    print cont
     saveContext(cont,"batman.raw")
     cont2 = loadContext("batman.raw")
-    print cont2
     cont2.update(loadRaw("cheese",cont2,"pg46.txt",10,200))
     saveContext(cont2,"robin.raw")
     
     finalTest = loadContext("robin.raw")
-    
+    for k,v in finalTest.iteritems():
+        print k,
+        print v
     return finalTest
