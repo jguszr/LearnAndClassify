@@ -5,6 +5,7 @@ Created on 19/12/2011
 '''
 # -*- coding: cp1252 -*-
 
+from collections import OrderedDict
 import operator
 
 
@@ -18,7 +19,7 @@ context = {"A" : [0.0,0.0,0.0,1.0,1.0,1.0,1.0,2.0,2.0,2.0,2.0,2.0],
 
 
 def setNewContext(theNew):
-    context = theNew
+    context = theNew 
 
 def frequencies(s):
     return ((a, s.count(a)) for a in set(s))
@@ -75,8 +76,8 @@ def basicTest():
     
 def test():
     print "classify \n"
-    cls = sorted(classify([0.0,0.0]).iteritems(),key=operator.itemgetter(1),reverse=False)
+    cls = OrderedDict(sorted(classify([0.0,0.0]).iteritems(),key=operator.itemgetter(1),reverse=False))
     for x,y in cls.iteritems():
         print x," = ", y
 
-    #print "maximum likelihood = ",maxLikelyHood(cls)
+    print "maximum likelihood = ",maxLikelyHood(cls)

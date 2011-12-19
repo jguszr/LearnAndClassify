@@ -7,7 +7,7 @@ Created on 19/12/2011
 
 import probabilities
 import operator
-#from collections import OrderedDict
+from collections import OrderedDict
 
 context = {"batman" : ["my other computer is installed on the batcave",
                            "robin is my bitch", "cat womoan isn't a milf",
@@ -65,8 +65,8 @@ def basicTest():
     
 def test():
     probabilities.context = splitContext()
-    x = sorted(probabilities.classify("dark side".split()).iteritems(),key=operator.itemgetter(1),reverse=False)
+    x = OrderedDict(sorted(probabilities.classify("dark side".split()).iteritems(),key=operator.itemgetter(1),reverse=False))
     print x
-    #print "probabilities.maxLikelyHood(x) = ",probabilities.maxLikelyHood(x)
+    print "probabilities.maxLikelyHood(x) = ",probabilities.maxLikelyHood(x)
     
     
