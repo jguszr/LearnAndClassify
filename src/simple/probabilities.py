@@ -60,6 +60,7 @@ def classify(toTest):
     return resp
 
 def maxLikelyHood(toTest):
+    
     k = max(toTest, key=toTest.get)
     return [(k,toTest[k])]
     
@@ -78,4 +79,4 @@ def test():
     for x,y in cls.iteritems():
         print x," = ", y
 
-    print "maximum likelihood = ",maxLikelyHood(cls)
+    #print "maximum likelihood = ",maxLikelyHood(cls)

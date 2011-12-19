@@ -7,9 +7,8 @@ Created on 19/12/2011
 
 import os
 
-RAW_DATA_PATH = "c:/development/python/LearnAndClassify/rawData/"
-
-CONTEXT_PATH = "c:/development/python/LearnAndClassify/contextData/"
+RAW_DATA_PATH = "/Users/josegustavozagatorosa/Documents/workspace/LearnAndClassify/rawData/"
+CONTEXT_PATH = "/Users/josegustavozagatorosa/Documents/workspace/LearnAndClassify/contextData/"
 
 KEY_ID = "@@@k:"
 LIST_VALUES_ID = "@@@Values:"
@@ -92,10 +91,7 @@ def basicTest():
     print cont2
     cont2.update(loadRaw("cheese",cont2,"pg46.txt",10,200))
     saveContext(cont2,"robin.raw")
+    
     finalTest = loadContext("robin.raw")
-    for k in finalTest.iterkeys():
-        print "key : \n"
-        for a in finalTest[k]:
-            print a
-            
+    
     return finalTest

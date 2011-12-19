@@ -67,6 +67,6 @@ def test():
     probabilities.context = splitContext()
     x = sorted(probabilities.classify("dark side".split()).iteritems(),key=operator.itemgetter(1),reverse=False)
     print x
-    print "probabilities.maxLikelyHood(x) = ",probabilities.maxLikelyHood(x)
+    #print "probabilities.maxLikelyHood(x) = ",probabilities.maxLikelyHood(x)
     
     
