@@ -7,8 +7,8 @@ Created on 19/12/2011
 
 import os
 
-RAW_DATA_PATH = "/Users/josegustavozagatorosa/Documents/workspace/LearnAndClassify/rawData/"
-CONTEXT_PATH = "/Users/josegustavozagatorosa/Documents/workspace/LearnAndClassify/contextData/"
+RAW_DATA_PATH = "C:/development/python/python_rep/LearnAndClassify2/rawData/"
+CONTEXT_PATH = "C:/development/python/python_rep/LearnAndClassify2/contextData/"
 
 KEY_ID = "@@@k:"
 LIST_VALUES_ID = "@@@Values:"
