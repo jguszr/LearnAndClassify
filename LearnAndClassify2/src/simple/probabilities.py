@@ -22,7 +22,7 @@ def setNewContext(theNew):
     context = theNew 
 
 def frequencies(s):
-    return ((a, s.count(a)) for a in set(s))
+    return [((a, s.count(a)) for a in set(s))]
 
 
 def individualProbabilites(key):
