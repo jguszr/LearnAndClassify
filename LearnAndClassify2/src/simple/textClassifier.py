@@ -9,7 +9,7 @@ import probabilities
 import operator
 from collections import OrderedDict
 
-context = {"batman" : ["my other computer is installed on the batcave",
+raw_context = {"batman" : ["my other computer is installed on the batcave",
                            "robin is my bitch", "cat womoan isn't a milf",
                            "Alfred, bring me milk ! Please !", "bat mobile is bacon powered",
                            "Robin take your hands off my pistol"],
@@ -22,7 +22,9 @@ context = {"batman" : ["my other computer is installed on the batcave",
                              "tree capitains, tree ships there is no coincidence on this"
                    ]}
 
+
 frequencies = {}
+context = {}
 
 def numOfWords():
 
@@ -31,7 +33,7 @@ def numOfWords():
 def genBagOfWords():
     
     megaList = []
-    for v in context.itervalues():
+    for v in raw_context.itervalues():
         megaList +=  [x.split() for x in v]
     vocabulary = sum(map(list, megaList), [])
     tempFreq = ((a, vocabulary.count(a)) for a in set(vocabulary))
@@ -47,17 +49,61 @@ def flatContext(ret):
         
     return ret
 
+
+
+def mostInformativeFeature(top=10):
+    freqs = genBagOfWords();
+    f = OrderedDict(sorted(freqs.iteritems(), key=operator.itemgetter(1),reverse=False))
+    return f
+
+def contextInfo():
+    
+    print " General Context Information"
+    print "---------------------------------------------------"
+    print " SIZE (words)                                      "
+    print "---------------------------------------------------"
+    for k in raw_context.iterkeys():
+        print k, "\t\t\t=  ", len(raw_context[k])
+    print "---------------------------------------------------"
+    print "Total \t\t\t\t=  ", probabilities.countAllContext()         
+    print "---------------------------------------------------"
+    print " Context Probabilities                             "
+    print "---------------------------------------------------"
+    total = 0
+    for k in raw_context.iterkeys():
+        prob = probabilities.contextProbability(k)
+        print k, "\t\t\t=  ", prob
+        total += prob
+    print "---------------------------------------------------"
+    print "Total \t\t\t\t= ",total
+    print "---------------------------------------------------"
+    print " Most Informative Features                         "
+    print "---------------------------------------------------"
+    generateProbabilisticContext()
+    
+    
 def splitContext():
     
     ret = {}
-    for k in context.iterkeys():
+    for k in raw_context.iterkeys():
         item = []
-        for v in context[k]:
+        for v in raw_context[k]:
             item.append( v.split())
         ret.update({k:item})
 
     return flatContext(ret)
 
+def generateProbabilisticContext():
+    
+    ret = {}
+    for k in raw_context.iterkeys():
+        sub = {}
+        size = len(raw_context[k])
+        for v in raw_context[k]:
+            sub[v] = raw_context[k].count(v) /float(size)  
+        ret[k]=sub
+    
+    return ret
 
 def basicTest():
     probabilities.context = splitContext()
