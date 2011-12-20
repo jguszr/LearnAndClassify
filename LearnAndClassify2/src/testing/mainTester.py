@@ -21,6 +21,15 @@ def runBasics():
     
 def train():
     print "def train():"
+    cont = {}
+    cont = textLoader.loadRaw("Christmas Carol",cont,"pg46.txt",200,60)
+    cont.update(textLoader.loadRaw("moby dick",cont,"pg2701.txt",200,500))
+    print "Raw Data"
+    for k,v in cont.iteritems():
+        print k,v
+    textClassifier.context = cont
+    
+    
 
 if __name__ == '__main__':
     for i in TO_RUN:
