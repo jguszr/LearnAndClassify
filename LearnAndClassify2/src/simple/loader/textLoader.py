@@ -35,12 +35,16 @@ def loadRaw(tag,container,fileName,chunkSize=1000, startingAt=0):
 
     return container
 
-def assertContextFile():
+def assertContextPath():
     if not os.path.exists(CONTEXT_PATH):
         os.makedirs(CONTEXT_PATH)
+        
+def assertContextFile(fileName):
+    return os.path.exists(CONTEXT_PATH+fileName)
+
 
 def saveContext(context,filename):
-    assertContextFile()
+    assertContextPath()
     toSave = open(CONTEXT_PATH+filename,'w')
     for k,v in context.iteritems():
         toSave.write(KEY_ID + k )
