@@ -58,6 +58,7 @@ def mostInformativeFeature(top=10):
 
 def contextInfo():
     
+    print "---------------------------------------------------"
     print " General Context Information"
     print "---------------------------------------------------"
     print " SIZE (words)                                      "
@@ -65,21 +66,20 @@ def contextInfo():
     for k in raw_context.iterkeys():
         print k, "\t\t\t=  ", len(raw_context[k])
     print "---------------------------------------------------"
-    print "Total \t\t\t\t=  ", probabilities.countAllContext()         
+    print "Total \t\t\t\t=  ", countAllContext()         
     print "---------------------------------------------------"
     print " Context Probabilities                             "
     print "---------------------------------------------------"
     total = 0
     for k in raw_context.iterkeys():
-        prob = probabilities.contextProbability(k)
+        prob = contextProbability(k)
         print k, "\t\t\t=  ", prob
         total += prob
     print "---------------------------------------------------"
     print "Total \t\t\t\t= ",total
     print "---------------------------------------------------"
-    print " Most Informative Features                         "
     print "---------------------------------------------------"
-    generateProbabilisticContext()
+    
     
     
 def splitContext():
@@ -104,6 +104,38 @@ def generateProbabilisticContext():
         ret[k]=sub
     
     return ret
+
+def getSingleItemProbability(item,ctxKey):
+    try:
+        return context[ctxKey][item]
+    except KeyError:
+        return 0.001
+    
+
+def naiveBayes(toTest,ctxKey):
+    
+    itemProbs = 0
+    for l in toTest.split():
+        itemProbs *= getSingleItemProbability(l,ctxKey)
+
+    return (contextProbability(ctxKey)+  itemProbs) / float(countAllContext()) 
+
+def classify(toTest):
+    resp = {}
+    for k in context.iterkeys():
+        resp[k] = naiveBayes(toTest,k)
+    return resp
+
+
+def contextProbability(key):
+
+    return len(raw_context[key])/float(countAllContext())
+    
+def countAllContext():
+    total = 0
+    for k in raw_context.iterkeys():
+        total += len(raw_context[k])
+    return total
 
 def basicTest():
     probabilities.context = splitContext()
