@@ -54,6 +54,8 @@ def combinedItemsProbability(toTest,givenContext):
         tp += itemProbability(i,givenContext)
     return tp
 
+
+
 def classify(toTest):
     resp = {}
     for k in context.iterkeys():
