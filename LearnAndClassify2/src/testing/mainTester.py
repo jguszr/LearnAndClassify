@@ -2,6 +2,8 @@
 Created on 19/12/2011
 
 @author: josegustavozagatorosa
+
+
 '''
 from simple import probabilities, textClassifier
 from simple.loader import textLoader
@@ -23,6 +25,14 @@ def runBasics():
     print "Running loader BasicTest() --------------------------"
     textLoader.basicTest()
     
+def prepareProbabilisticContext():
+    if not textLoader.assertContextFile("trainSet.freq"):
+        print "no file found... Generating the probabilistic model"
+        textClassifier.context = textClassifier.generateProbabilisticContext()
+        textLoader.saveProbabilisticContext(textClassifier.context, "trainSet.freq")
+    else:
+        print "found freq. file... "
+        textLoader.loadProbabilisticContext("trainSet.freq")
 
 def prepareContext():
     cont = {}
@@ -56,17 +66,18 @@ if __name__ == '__main__':
         if i and train:
             train()
         if i and info:
+            print "prepare "
             textClassifier.raw_context = prepareContext()
+            print "splitting "            
             textClassifier.raw_context = textClassifier.splitContext()
-            probabilities.context = textClassifier.raw_context   
-            textClassifier.context = textClassifier.generateProbabilisticContext()
-            for k,v in textClassifier.context.iteritems():
-                print k
-                j=0
-                for i,x in v.iteritems():
-                    if j>100:
-                        break
-                    print "\t",i, "=", x
-                    j+=1  
-            #textClassifier.contextInfo()
+            probabilities.context = textClassifier.raw_context
+            print "generating probabilities "               
+            prepareProbabilisticContext()
+            print "dumping "   
+            textClassifier.contextInfo()
+#            print textClassifier.context
+            print "Text Classify test "
+            print "The register of his burial was signed by the clergyman, the clerk, the undertaker"
+#            print "",textClassifier.classify("goose")
+            
             
