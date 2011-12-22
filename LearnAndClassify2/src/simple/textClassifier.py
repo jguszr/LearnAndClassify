@@ -106,19 +106,37 @@ def generateProbabilisticContext():
     return ret
 
 def getSingleItemProbability(item,ctxKey):
-    try:
-        return context[ctxKey][item]
+    ctx = context[ctxKey]
+    try: 
+        return ctx[item]
     except KeyError:
-        return 0.001
+        return 0.011
+#    try:
+#        return context[ctxKey][item]
+#    except KeyError:
+#        return 0.001
     
+def getSingleFeatureProbabilityToAllContexts(item):
+    
+    total = 0
+    
+    for k in context.iterkeys():
+        total += getSingleItemProbability(item,k)
+        
+    return total
 
 def naiveBayes(toTest,ctxKey):
     
     itemProbs = 0
-    for l in toTest.split():
-        itemProbs *= getSingleItemProbability(l,ctxKey)
-
-    return (contextProbability(ctxKey)+  itemProbs) / float(countAllContext()) 
+    wordList = toTest.split()
+    for l in wordList:
+        itemProbs += getSingleItemProbability(l,ctxKey)
+        
+    totalProbs = 0 
+    for x in wordList:
+        totalProbs += getSingleFeatureProbabilityToAllContexts(x)
+        
+    return (contextProbability(ctxKey)*  itemProbs) / totalProbs
 
 def classify(toTest):
     resp = {}
