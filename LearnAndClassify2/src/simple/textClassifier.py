@@ -9,6 +9,7 @@ import probabilities
 import operator
 from collections import OrderedDict
 from simple.loader import textLoader
+from simple.filter import WordFiltering, WordCleaning
 
 raw_context = {"batman" : ["my other computer is installed on the batcave",
                            "robin is my bitch", "cat womoan isn't a milf",
@@ -51,10 +52,17 @@ def flatContext(ret):
     return ret
 
 
-def mostInformativeFeature(top=10):
-    freqs = genBagOfWords();
-    f = OrderedDict(sorted(freqs.iteritems(), key=operator.itemgetter(1),reverse=False))
-    return f
+def mostInformativeFeature(ctx, top=10):
+#    OrderedDict(sorted(probabilities.classify("A pile on the earth strong for the burning".split()).iteritems(),key=operator.itemgetter(1),reverse=True))
+    ret = {}
+    i=0
+    for k,v in OrderedDict(sorted(context[ctx].iteritems()),key=operator.itemgetter(1), reverse=False).iteritems():
+        if i<=top:
+            ret.update({k:v})
+            i+=1
+        else:
+            break
+    return ret
 
 def contextInfo():
     
@@ -78,8 +86,13 @@ def contextInfo():
     print "---------------------------------------------------"
     print "Total \t\t\t\t= ",total
     print "---------------------------------------------------"
+    print "Most informative Features per Context"
     print "---------------------------------------------------"
-    
+    for k in context.iterkeys():
+        print k," :"
+        for x in mostInformativeFeature(k):
+            print "\t",x,"\t" ,getSingleItemProbability(x,k), "\t",  getSingleFeatureProbabilityToAllContexts(x)
+    print "---------------------------------------------------"
     
     
 def splitContext():
@@ -101,7 +114,7 @@ def generateProbabilisticContext(stopWords=[]):
         size = len(raw_context[k])
         for v in raw_context[k]:
             if stopWords.count(v.lower())==0:
-                sub[v] = raw_context[k].count(v) /float(size)  
+                sub[WordCleaning.cleanNonAlfabeticalChars(v)] = raw_context[k].count(v) /float(size)  
         ret[k]=sub
     
     return ret
