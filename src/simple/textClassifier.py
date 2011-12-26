@@ -8,8 +8,10 @@ Created on 19/12/2011
 import probabilities
 import operator
 from collections import OrderedDict
+from simple.loader import textLoader
+from simple.filter import  WordCleaning
 
-context = {"batman" : ["my other computer is installed on the batcave",
+raw_context = {"batman" : ["my other computer is installed on the batcave",
                            "robin is my bitch", "cat womoan isn't a milf",
                            "Alfred, bring me milk ! Please !", "bat mobile is bacon powered",
                            "Robin take your hands off my pistol"],
@@ -22,7 +24,9 @@ context = {"batman" : ["my other computer is installed on the batcave",
                              "tree capitains, tree ships there is no coincidence on this"
                    ]}
 
+
 frequencies = {}
+context = {}
 
 def numOfWords():
 
@@ -31,7 +35,7 @@ def numOfWords():
 def genBagOfWords():
     
     megaList = []
-    for v in context.itervalues():
+    for v in raw_context.itervalues():
         megaList +=  [x.split() for x in v]
     vocabulary = sum(map(list, megaList), [])
     tempFreq = ((a, vocabulary.count(a)) for a in set(vocabulary))
@@ -47,17 +51,131 @@ def flatContext(ret):
         
     return ret
 
+
+def mostInformativeFeature(ctx, top=10):
+#    OrderedDict(sorted(probabilities.classify("A pile on the earth strong for the burning".split()).iteritems(),key=operator.itemgetter(1),reverse=True))
+    ret = {}
+    i=0
+    for k,v in OrderedDict(sorted(context[ctx].iteritems()),key=operator.itemgetter(1), reverse=False).iteritems():
+        if i<=top:
+            ret.update({k:v})
+            i+=1
+        else:
+            break
+    return ret
+
+def contextInfo():
+    
+    print "---------------------------------------------------"
+    print " General Context Information"
+    print "---------------------------------------------------"
+    print " SIZE (words)                                      "
+    print "---------------------------------------------------"
+    for k in raw_context.iterkeys():
+        print k, "\t\t\t=  ", len(raw_context[k])
+    print "---------------------------------------------------"
+    print "Total \t\t\t\t=  ", countAllContext()         
+    print "---------------------------------------------------"
+    print " Context Probabilities                             "
+    print "---------------------------------------------------"
+    total = 0
+    for k in raw_context.iterkeys():
+        prob = contextProbability(k)
+        print k, "\t\t\t=  ", prob
+        total += prob
+    print "---------------------------------------------------"
+    print "Total \t\t\t\t= ",total
+    print "---------------------------------------------------"
+    print "Most informative Features per Context"
+    print "---------------------------------------------------"
+    for k in context.iterkeys():
+        print k," :"
+        for x in mostInformativeFeature(k):
+            print "\t",x,"\t" ,getSingleItemProbability(x,k), "\t",  getSingleFeatureProbabilityToAllContexts(x)
+    print "---------------------------------------------------"
+    
+    
 def splitContext():
     
     ret = {}
-    for k in context.iterkeys():
+    for k in raw_context.iterkeys():
         item = []
-        for v in context[k]:
+        for v in raw_context[k]:
             item.append( v.split())
         ret.update({k:item})
 
     return flatContext(ret)
 
+def generateProbabilisticContext(stopWords=[]):
+    
+    ret = {}
+    for k in raw_context.iterkeys():
+        sub = {}
+        size = len(raw_context[k])
+        for v in raw_context[k]:
+            if stopWords.count(v.lower())==0:
+                sub[WordCleaning.cleanNonAlfabeticalChars(v)] = raw_context[k].count(v) /float(size)  
+        ret[k]=sub
+    
+    return ret
+
+def getSingleItemProbability(item,ctxKey):
+    ctx = context[ctxKey]
+    try:
+        return float(ctx[item])
+    except KeyError:
+        return 0.0
+#    try:
+#        return context[ctxKey][item]
+#    except KeyError:
+#        return 0.001
+    
+def getSingleFeatureProbabilityToAllContexts(item):
+    
+    total = 0.000001
+    
+    for k in context.iterkeys():
+        p = getSingleItemProbability(item,k)
+        if p<>0.0:
+            total *= p 
+        
+    return total
+
+def naiveBayes(toTest,ctxKey):
+    
+    itemProbs = 0.0001
+    wordList = toTest.split()
+    for l in wordList:
+        p = getSingleItemProbability(l,ctxKey)
+        if p<>0.0:
+            itemProbs *=p
+
+    totalProbs = 0.0001
+    for x in wordList:
+        totalProbs += getSingleFeatureProbabilityToAllContexts(x)
+    return (itemProbs * contextProbability(ctxKey)) / float(totalProbs)
+
+def classify(toTest):
+    resp = {}
+    for k in context.iterkeys():
+        resp[k] = naiveBayes(toTest,k)
+    return resp
+
+def maxLikelyHood(toTest):
+    
+    k = max(toTest, key=toTest.get)
+    return [(k,toTest[k])]
+
+
+def contextProbability(key):
+
+    return len(raw_context[key])/float(countAllContext())
+    
+def countAllContext():
+    total = 0
+    for k in raw_context.iterkeys():
+        total += len(raw_context[k])
+    return total
 
 def basicTest():
     probabilities.context = splitContext()

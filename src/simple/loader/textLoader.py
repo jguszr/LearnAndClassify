@@ -7,12 +7,13 @@ Created on 19/12/2011
 
 import os
 
-RAW_DATA_PATH = "/Users/josegustavozagatorosa/Documents/workspace/LearnAndClassify/rawData/"
-CONTEXT_PATH = "/Users/josegustavozagatorosa/Documents/workspace/LearnAndClassify/contextData/"
+RAW_DATA_PATH = "C:/development/python/python_rep/LearnAndClassify2/rawData/"
+CONTEXT_PATH = "C:/development/python/python_rep/LearnAndClassify2/contextData/"
 
 KEY_ID = "@@@k:"
 LIST_VALUES_ID = "@@@Values:"
 LIST_SIZE = "@@@size:"
+KV_SEPARATOR = "@:@"
 
 def loadRaw(tag,container,fileName,chunkSize=1000, startingAt=0):
 
@@ -35,18 +36,40 @@ def loadRaw(tag,container,fileName,chunkSize=1000, startingAt=0):
 
     return container
 
-def assertContextFile():
+def assertContextPath():
     if not os.path.exists(CONTEXT_PATH):
         os.makedirs(CONTEXT_PATH)
+        
+def assertContextFile(fileName):
+    return os.path.exists(CONTEXT_PATH+fileName)
+
 
 def saveContext(context,filename):
-    assertContextFile()
+    assertContextPath()
     toSave = open(CONTEXT_PATH+filename,'w')
     for k,v in context.iteritems():
         toSave.write(KEY_ID + k )
         toSave.write(LIST_SIZE + str(len(v)) + "\n")
         [(l, toSave.write(l)) for l in v]
     toSave.close()
+    
+def saveProbabilisticContext(context,filename):
+    assertContextPath()
+    toSave = open(CONTEXT_PATH+filename,'w')
+    for k in context.iterkeys():
+        toSave.write(KEY_ID+k)
+        toSave.write(LIST_SIZE + str(len(context[k])) + "\n")
+        content = context[k]
+        for l,m in content.iteritems():
+            toSave.write(l+KV_SEPARATOR+str(m)+"\n")
+    toSave.close()    
+
+def loadStopWords(filename):
+    toLoad = open(CONTEXT_PATH+filename)
+    ret = []
+    [(l, ret.append(l.lower())) for l in toLoad]
+    toLoad.close()
+    return ret
 
 def isKeyId(line):
     return line.startswith(KEY_ID)
@@ -80,8 +103,31 @@ def loadContext(filename):
         if k <>'' and len(data)>0:
             newContext.update({k:data})
     toLoad.close()
-    return newContext    
+    return newContext
     
+def loadProbabilisticContext(filename):
+    
+    newContext = {}
+    toLoad = open(CONTEXT_PATH+filename,'r')
+    l='x'
+    while l<>'':
+        freqs = {}
+        l = toLoad.readline()
+        if isKeyId(l):
+            k= extractKey(l)
+            lsize = int(getValuesSize(l))
+        i=0
+        while i<lsize:
+            l = toLoad.readline()
+            if l<>"":
+                freqs[l.split(KV_SEPARATOR)[0]]=float(l.split(KV_SEPARATOR)[1])
+            i+=1
+        if k <>'' and len(freqs)>0:
+            newContext.update({k:freqs})
+    toLoad.close()
+    return newContext
+    
+        
 def basicTest():
     cont = {}
     cont = loadRaw("bacon",cont,"pg46.txt",100,20)
