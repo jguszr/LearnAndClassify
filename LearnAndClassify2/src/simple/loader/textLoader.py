@@ -64,6 +64,13 @@ def saveProbabilisticContext(context,filename):
             toSave.write(l+KV_SEPARATOR+str(m)+"\n")
     toSave.close()    
 
+def loadStopWords(filename):
+    toLoad = open(CONTEXT_PATH+filename)
+    ret = []
+    [(l, ret.append(l.lower())) for l in toLoad]
+    toLoad.close()
+    return ret
+
 def isKeyId(line):
     return line.startswith(KEY_ID)
 
