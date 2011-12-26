@@ -9,7 +9,7 @@ import probabilities
 import operator
 from collections import OrderedDict
 from simple.loader import textLoader
-from simple.filter import WordFiltering, WordCleaning
+from simple.filter import  WordCleaning
 
 raw_context = {"batman" : ["my other computer is installed on the batcave",
                            "robin is my bitch", "cat womoan isn't a milf",
