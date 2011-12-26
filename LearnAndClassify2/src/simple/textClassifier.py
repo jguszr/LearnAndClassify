@@ -8,6 +8,7 @@ Created on 19/12/2011
 import probabilities
 import operator
 from collections import OrderedDict
+from simple.loader import textLoader
 
 raw_context = {"batman" : ["my other computer is installed on the batcave",
                            "robin is my bitch", "cat womoan isn't a milf",
@@ -92,14 +93,15 @@ def splitContext():
 
     return flatContext(ret)
 
-def generateProbabilisticContext():
+def generateProbabilisticContext(stopWords=[]):
     
     ret = {}
     for k in raw_context.iterkeys():
         sub = {}
         size = len(raw_context[k])
         for v in raw_context[k]:
-            sub[v] = raw_context[k].count(v) /float(size)  
+            if stopWords.count(v.lower())==0:
+                sub[v] = raw_context[k].count(v) /float(size)  
         ret[k]=sub
     
     return ret
