@@ -50,7 +50,6 @@ def flatContext(ret):
     return ret
 
 
-
 def mostInformativeFeature(top=10):
     freqs = genBagOfWords();
     f = OrderedDict(sorted(freqs.iteritems(), key=operator.itemgetter(1),reverse=False))
@@ -118,7 +117,7 @@ def getSingleItemProbability(item,ctxKey):
     
 def getSingleFeatureProbabilityToAllContexts(item):
     
-    total = 0
+    total = 0.000001
     
     for k in context.iterkeys():
         p = getSingleItemProbability(item,k)
@@ -139,13 +138,18 @@ def naiveBayes(toTest,ctxKey):
     totalProbs = 0.0001
     for x in wordList:
         totalProbs += getSingleFeatureProbabilityToAllContexts(x)
-    return ((contextProbability(ctxKey)*  itemProbs)) / totalProbs
+    return (itemProbs * contextProbability(ctxKey)) / float(totalProbs)
 
 def classify(toTest):
     resp = {}
     for k in context.iterkeys():
         resp[k] = naiveBayes(toTest,k)
     return resp
+
+def maxLikelyHood(toTest):
+    
+    k = max(toTest, key=toTest.get)
+    return [(k,toTest[k])]
 
 
 def contextProbability(key):
